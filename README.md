@@ -1,4 +1,4 @@
-# EDA (Exploratory Data Analysis)
+# LESSONS
 
 This repository contains code for performing Exploratory Data Analysis (EDA) on a dataset. The EDA is implemented using Jupyter Notebook and includes various data analysis techniques and visualizations.
 
