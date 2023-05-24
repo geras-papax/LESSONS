@@ -16,7 +16,7 @@ def FeatureInfo(data: pd.DataFrame=None):
   num_rows = (num_features - 1) // 3 + 1
   num_cols = min(3, num_features)
 
-  fig, axes = plt.subplots(num_rows, num_cols, figsize=(15, 8))
+  fig, axes = plt.subplots(num_rows, num_cols, figsize=(18, 16))
   axes = axes.flatten()
 
   # Distribution of each feature
@@ -27,7 +27,7 @@ def FeatureInfo(data: pd.DataFrame=None):
           axes[i].set_ylabel('Frequency')
           axes[i].set_title(f'Distribution of {column}')
 
-  fig.tight_layout()
+  plt.tight_layout()
   plt.show()
 
   # Label's class distribution

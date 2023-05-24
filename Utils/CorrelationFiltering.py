@@ -105,7 +105,7 @@ def PearsonCorrelation(data:pd.DataFrame=None) -> pd.DataFrame:
   return correlation_matrix
 
 def FiCorrelation(data:pd.DataFrame=None):
-    X = data.drop(columns=['label'])  # Features
+    X = data.iloc[:,:-1]  # Features
     y = data['label']  # Labels
 
     # Calculate feature importance correlation using f_classif
@@ -118,7 +118,7 @@ def FiCorrelation(data:pd.DataFrame=None):
     feature_importance = feature_importance.sort_values(by='F-Score', ascending=False)
 
     # Plot the feature importance correlation results
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(12, 7))
     sns.barplot(data=feature_importance, x='F-Score', y='Feature')
     plt.xlabel('F-Score')
     plt.ylabel('Feature')
@@ -133,33 +133,18 @@ def MutualInformation(data:pd.DataFrame=None):
     estimate = estimate_mi(y= data['label'].values, 
                         x= data.iloc[:,:-1],
                         normalize = True)
-
-
-
     # Pairwise comparisons between a set of variables
     #
     pairwise = pairwise_mi( data, normalize=True )
-    estimate.T.plot(kind    = 'barh', 
-                    figsize = (7, 4), 
-                    legend  = None)
+    plt.figure(figsize=(12, 7))
+    sns.barplot(data=estimate, orient='h')
     # Visualize Mutual Information matrix
     #
-    plt.figure(figsize = (10, 12))
-    sns.set(font_scale = 1.5)
+    plt.figure(figsize = (22, 15))
 
-    sns.heatmap(data        = pairwise,
-                cbar        = True,
-                annot       = True,
-                square      = True,
-                fmt         = '.2f',
-                annot_kws   = {'size': 16},
-                cmap        = 'coolwarm',                 
-                #
-                yticklabels = data.columns,
-                xticklabels = data.columns)
+    sns.heatmap(pairwise, annot=True, cmap="coolwarm")
 
-    plt.title('Mutual Information matrix showing correlation coefficients', size = 14, weight='bold')
-    plt.tight_layout()
+    plt.title('Mutual Information matrix showing correlation coefficients')
     plt.show()
 
 
@@ -191,3 +176,31 @@ def CorrelatingFiltering(data: pd.DataFrame=None, correlation_matrix: pd.DataFra
     print("Dropped columns:", dropped_columns)
     return data_filtered, True
 
+def FeatureSelection(data: pd.DataFrame=None) :
+    # Separate the features and target variable
+    X = data.iloc[:, :-1]  # Features
+    y = data['label']  # Target variable
+
+    # Select the number of top features to keep
+    k = 5
+
+    # Perform feature selection using mutual information
+    # mutual_info_scores = estimate_mi(y=y, x= X, normalize = True)
+    # print(mutual_info_scores.values)
+    # top_mutual_info_indices = mutual_info_scores.values.argsort()[:k][::-1]
+    # top_mutual_info_features = X.columns[top_mutual_info_indices]
+
+    # Perform feature selection using fi-correlation
+    correlation_scores, p_values = f_classif(X, y)
+    top_correlation_indices = correlation_scores.argsort()[-k:][::-1]
+    top_correlation_features = X.columns[top_correlation_indices]
+
+    # Perform feature selection using Pearson correlation
+    pearson_correlation_scores = abs(data.corr(method='pearson')['label']).drop('label')
+    top_pearson_correlation_indices = pearson_correlation_scores.argsort()[-k:][::-1]
+    top_pearson_correlation_features = X.columns[top_pearson_correlation_indices]
+
+    # Print the top features selected by each method
+    # print("Top", k, "features selected by Mutual Information:", top_mutual_info_features)
+    print("Top", k, "features selected by Correlation:", top_correlation_features)
+    print("Top", k, "features selected by Pearson Correlation:", top_pearson_correlation_features)
