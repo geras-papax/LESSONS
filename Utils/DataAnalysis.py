@@ -111,7 +111,7 @@ def isCategorical(column: pd.DataFrame=None) -> bool:
     else:
         return False
 
-def checkCategoricalColumns(data: pd.DataFrame=None) -> tuple[list, list]:
+def checkCategoricalColumns(data: pd.DataFrame=None) -> '''tuple[list, list]''':
     categorical_columns = []
     non_categorical_columns = []
 

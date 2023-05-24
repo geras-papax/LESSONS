@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from scipy.stats import ttest_ind
-
+from sklearn.feature_selection import f_classif
+from ennemi import estimate_mi
+from ennemi import pairwise_mi
 
 def calcDrop(res:pd.DataFrame=None) -> list:
     '''
@@ -103,8 +104,66 @@ def PearsonCorrelation(data:pd.DataFrame=None) -> pd.DataFrame:
 
   return correlation_matrix
 
+def FiCorrelation(data:pd.DataFrame=None):
+    X = data.drop(columns=['label'])  # Features
+    y = data['label']  # Labels
 
-def CorrelatingFiltering(data: pd.DataFrame=None, correlation_matrix: pd.DataFrame=None) -> tuple[pd.DataFrame, bool]:
+    # Calculate feature importance correlation using f_classif
+    f_scores, p_values = f_classif(X, y)
+
+    # Create a DataFrame to store the feature importance correlation results
+    feature_importance = pd.DataFrame({'Feature': X.columns, 'F-Score': f_scores, 'p-value': p_values})
+
+    # Sort the features based on F-Score in descending order
+    feature_importance = feature_importance.sort_values(by='F-Score', ascending=False)
+
+    # Plot the feature importance correlation results
+    plt.figure(figsize=(10, 6))
+    sns.barplot(data=feature_importance, x='F-Score', y='Feature')
+    plt.xlabel('F-Score')
+    plt.ylabel('Feature')
+    plt.title('Feature Importance Correlation')
+    plt.tight_layout()
+    plt.show()
+
+
+def MutualInformation(data:pd.DataFrame=None):
+    # Compare target variable against all other variables
+    #
+    estimate = estimate_mi(y= data['label'].values, 
+                        x= data.iloc[:,:-1],
+                        normalize = True)
+
+
+
+    # Pairwise comparisons between a set of variables
+    #
+    pairwise = pairwise_mi( data, normalize=True )
+    estimate.T.plot(kind    = 'barh', 
+                    figsize = (7, 4), 
+                    legend  = None)
+    # Visualize Mutual Information matrix
+    #
+    plt.figure(figsize = (10, 12))
+    sns.set(font_scale = 1.5)
+
+    sns.heatmap(data        = pairwise,
+                cbar        = True,
+                annot       = True,
+                square      = True,
+                fmt         = '.2f',
+                annot_kws   = {'size': 16},
+                cmap        = 'coolwarm',                 
+                #
+                yticklabels = data.columns,
+                xticklabels = data.columns)
+
+    plt.title('Mutual Information matrix showing correlation coefficients', size = 14, weight='bold')
+    plt.tight_layout()
+    plt.show()
+
+
+def CorrelatingFiltering(data: pd.DataFrame=None, correlation_matrix: pd.DataFrame=None) -> '''tuple[pd.DataFrame, bool]''':
   # Avg correlation for each feature
   average_correlations = correlation_matrix.abs().mean()
 
