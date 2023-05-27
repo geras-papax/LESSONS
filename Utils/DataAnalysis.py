@@ -39,13 +39,13 @@ def FeatureInfo(data: pd.DataFrame=None):
   plt.title('Class Distribution')
   plt.show()
 
-  # Plot pair-wise interactions between features with label
-  sns.pairplot(data      = data, 
-             hue       = 'label',
-             palette   = 'Set1',
-             kind      = 'scatter', # 'scatter', 'kde', 'hist', 'reg'
-             diag_kind = 'hist');   # 'auto', 'hist', 'kde', None
-  plt.show()
+#   # Plot pair-wise interactions between features with label
+#   sns.pairplot(data      = data, 
+#              hue       = 'label',
+#              palette   = 'Set1',
+#              kind      = 'scatter', # 'scatter', 'kde', 'hist', 'reg'
+#              diag_kind = 'hist');   # 'auto', 'hist', 'kde', None
+#   plt.show()
 
 
 def T_Test(data: pd.DataFrame=None, categorical_cols: list=None, non_categorical_cols: list=None):
