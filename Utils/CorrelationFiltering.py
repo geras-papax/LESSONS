@@ -103,34 +103,13 @@ def PearsonCorrelation(data:pd.DataFrame=None):
   plt.show()
 
 def FiCorrelation(data:pd.DataFrame=None):
-<<<<<<< Updated upstream
-    X = data.iloc[:,:-1]  # Features
-    y = data['label']  # Labels
-
-    # Calculate feature importance correlation using f_classif
-    f_scores, p_values = f_classif(X, y)
-
-    # Create a DataFrame to store the feature importance correlation results
-    feature_importance = pd.DataFrame({'Feature': X.columns, 'F-Score': f_scores, 'p-value': p_values})
-=======
->>>>>>> Stashed changes
 
     # Calculate phi_k correlation matrix
     correlation_matrix = data.iloc[:, :-1].phik_matrix()
 
-<<<<<<< Updated upstream
-    # Plot the feature importance correlation results
-    plt.figure(figsize=(12, 7))
-    sns.barplot(data=feature_importance, x='F-Score', y='Feature')
-    plt.xlabel('F-Score')
-    plt.ylabel('Feature')
-    plt.title('Feature Importance Correlation')
-    plt.tight_layout()
-=======
     plt.figure(figsize=(19, 15))
     sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm")
     plt.title("Phi_k's Correlation Heatmap")
->>>>>>> Stashed changes
     plt.show()
 
 
@@ -167,7 +146,7 @@ def CorrelatingFiltering(data: pd.DataFrame=None, correlation_matrix: pd.DataFra
   print("Max average correlation value:", max_average_correlation_value)
 
   # Get the columns with correlation lower than 0.8 with the specific column
-  low_correlation_columns = correlation_matrix[(correlation_matrix[feature_with_max_average_correlation] < 0.8) | (correlation_matrix[feature_with_max_average_correlation] == 1)].index
+  low_correlation_columns = correlation_matrix[(correlation_matrix[feature_with_max_average_correlation] < 0.8) |  (correlation_matrix[feature_with_max_average_correlation] == 1)].index
 
   # Last column with labels
   low_correlation_columns = low_correlation_columns.append(pd.Index([data.columns[-1]]))
@@ -183,29 +162,12 @@ def CorrelatingFiltering(data: pd.DataFrame=None, correlation_matrix: pd.DataFra
     print("Dropped columns:", dropped_columns)
     return data_filtered, True
 
-<<<<<<< Updated upstream
-def FeatureSelection(data: pd.DataFrame=None) :
-=======
 def FeatureSelection(data: pd.DataFrame=None, num: int=5) :
->>>>>>> Stashed changes
     # Separate the features and target variable
     X = data.iloc[:, :-1]  # Features
     y = data['label']  # Target variable
 
     # Select the number of top features to keep
-<<<<<<< Updated upstream
-    k = 5
-
-    # Perform feature selection using mutual information
-    # mutual_info_scores = estimate_mi(y=y, x= X, normalize = True)
-    # print(mutual_info_scores.values)
-    # top_mutual_info_indices = mutual_info_scores.values.argsort()[:k][::-1]
-    # top_mutual_info_features = X.columns[top_mutual_info_indices]
-
-    # Perform feature selection using fi-correlation
-    correlation_scores, p_values = f_classif(X, y)
-    top_correlation_indices = correlation_scores.argsort()[-k:][::-1]
-=======
     k = num
 
     # Perform feature selection using mutual information
@@ -216,7 +178,6 @@ def FeatureSelection(data: pd.DataFrame=None, num: int=5) :
     # Perform feature selection using fi-correlation
     phik_correlation_scores = data.phik_matrix()['label'].drop('label')
     top_correlation_indices = phik_correlation_scores.argsort()[-k:][::-1]
->>>>>>> Stashed changes
     top_correlation_features = X.columns[top_correlation_indices]
 
     # Perform feature selection using Pearson correlation
@@ -225,11 +186,6 @@ def FeatureSelection(data: pd.DataFrame=None, num: int=5) :
     top_pearson_correlation_features = X.columns[top_pearson_correlation_indices]
 
     # Print the top features selected by each method
-<<<<<<< Updated upstream
-    # print("Top", k, "features selected by Mutual Information:", top_mutual_info_features)
-    print("Top", k, "features selected by Correlation:", top_correlation_features)
-    print("Top", k, "features selected by Pearson Correlation:", top_pearson_correlation_features)
-=======
     print("Top", k, "features selected by Mutual Information:", top_mutual_info_features)
     print("Top", k, "features selected by Phi_k Correlation:", top_correlation_features)
     print("Top", k, "features selected by Pearson Correlation:", top_pearson_correlation_features)
@@ -241,4 +197,4 @@ def FeatureSelection(data: pd.DataFrame=None, num: int=5) :
     sns.barplot(data=pd.DataFrame(phik_correlation_scores).T, orient='h')
     plt.title('Phi_k Correlation on Label')
     plt.show()
->>>>>>> Stashed changes
+
